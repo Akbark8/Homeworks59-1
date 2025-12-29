@@ -10,8 +10,11 @@ from .serializers import (
 )
 
 # Categories
+from django.db.models import Count
 class CategoryListView(ListAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.annotate(
+        products_count=Count('products')
+    )
     serializer_class = CategorySerializer
 
 
@@ -19,6 +22,10 @@ class CategoryDetailView(RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'id'
+
+
+
+
 
 
 # Products
@@ -43,3 +50,14 @@ class ReviewDetailView(RetrieveAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     lookup_field = 'id'
+
+from rest_framework.generics import ListAPIView
+from django.db.models import Prefetch, Count
+from .models import Product, Review
+from .serializers import ProductReviewSerializer
+
+class ProductWithReviewsView(ListAPIView):
+    queryset = Product.objects.prefetch_related(
+        Prefetch('reviews', queryset=Review.objects.all())
+    )
+    serializer_class = ProductReviewSerializer

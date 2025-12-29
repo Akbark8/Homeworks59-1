@@ -21,8 +21,16 @@ class Product(models.Model):
         return self.title
 
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 class Review(models.Model):
     text = models.TextField()
+    stars = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ], default=0
+    )
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
@@ -30,4 +38,4 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        return f"Review for {self.product.title}"
+        return f"{self.stars}⭐ - {self.product.title}"
