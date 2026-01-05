@@ -1,6 +1,6 @@
 from rest_framework.generics import (
-    ListAPIView,
-    RetrieveAPIView
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView
 )
 from .models import Category, Product, Review
 from .serializers import (
@@ -9,55 +9,37 @@ from .serializers import (
     ReviewSerializer
 )
 
-# Categories
-from django.db.models import Count
-class CategoryListView(ListAPIView):
-    queryset = Category.objects.annotate(
-        products_count=Count('products')
-    )
+# ---------- Categories ----------
+class CategoryListCreateView(ListCreateAPIView):
+    queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class CategoryDetailView(RetrieveAPIView):
+class CategoryDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'id'
 
 
-
-
-
-
-# Products
-class ProductListView(ListAPIView):
+# ---------- Products ----------
+class ProductListCreateView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
-class ProductDetailView(RetrieveAPIView):
+class ProductDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
 
 
-# Reviews
-class ReviewListView(ListAPIView):
+# ---------- Reviews ----------
+class ReviewListCreateView(ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
 
-class ReviewDetailView(RetrieveAPIView):
+class ReviewDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     lookup_field = 'id'
-
-from rest_framework.generics import ListAPIView
-from django.db.models import Prefetch, Count
-from .models import Product, Review
-from .serializers import ProductReviewSerializer
-
-class ProductWithReviewsView(ListAPIView):
-    queryset = Product.objects.prefetch_related(
-        Prefetch('reviews', queryset=Review.objects.all())
-    )
-    serializer_class = ProductReviewSerializer
