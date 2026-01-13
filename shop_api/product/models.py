@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 class Category(models.Model):
@@ -39,3 +40,17 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.stars}⭐ - {self.product.title}"
+
+    class UserConfirm(models.Model):
+        user = models.OneToOneField(
+            User,
+            on_delete=models.CASCADE,
+            related_name='confirm'
+        )
+        code = models.CharField(max_length=6)
+
+        def __str__(self):
+            return f"{self.user.username} - {self.code}"
+
+
+
