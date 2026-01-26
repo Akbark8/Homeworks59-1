@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -42,10 +42,9 @@ class Review(models.Model):
         return f"{self.stars}⭐ - {self.product.title}"
 
     class UserConfirm(models.Model):
-        user = models.OneToOneField(
-            User,
-            on_delete=models.CASCADE,
-            related_name='confirm'
+        user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete=models.CASCADE
         )
         code = models.CharField(max_length=6)
 
