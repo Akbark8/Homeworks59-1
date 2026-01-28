@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .managers import CustomUserManager
+
 
 class User(AbstractUser):
     phone_number = models.CharField(
@@ -9,4 +11,7 @@ class User(AbstractUser):
         null=True
     )
 
-    REQUIRED_FIELDS = ['phone_number']
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.username
