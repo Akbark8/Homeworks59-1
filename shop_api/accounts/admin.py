@@ -1,8 +1,13 @@
 from django.contrib import admin
-from .models import User
+from .models import CustomUser, ConfirmationCode
 
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'phone_number', 'is_staff')
-    search_fields = ('username', 'email', 'phone_number')
+@admin.register(CustomUser)
+class CustomUser(admin.ModelAdmin):
+    list_display = ('id', 'email', 'username', 'birthdate', 'is_active')
+    search_fields = ('email',)
+
+
+@admin.register(ConfirmationCode)
+class ConfirmationCode(admin.ModelAdmin):
+    list_display = ('user', 'code', 'created_at')

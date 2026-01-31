@@ -21,7 +21,7 @@ urlpatterns = [
     path('reviews/', ReviewListCreateView.as_view()),
     path('reviews/<int:id>/', ReviewDetailView.as_view()),
 
-    path('users/register/', RegisterView.as_view()),
-    path('users/confirm/', ConfirmView.as_view()),
-    path('users/login/', LoginView.as_view()),
+    path('accounts/register/', RegisterView.as_view()),
+    path('accounts/confirm/', ConfirmView.as_view()),
+    path('accounts/login/', LoginView.as_view()),
 ]
