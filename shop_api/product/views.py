@@ -3,10 +3,17 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Category, Product, Review
+from .permissions import (
+    CanEditWithIn15Minutes,
+    IsAnonymous,
+    IsModerator,
+    IsOwner,
+)
 from .serializers import (
     CategorySerializer,
     ProductSerializer,
@@ -18,11 +25,21 @@ class CategoryListCreateView(ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsModerator()]
+
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsModerator()]
 
 
 # ---------- Products ----------
@@ -30,11 +47,21 @@ class ProductListCreateView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsModerator()]
+
 
 class ProductDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsModerator()]
 
 
 # ---------- Reviews ----------
@@ -42,11 +69,24 @@ class ReviewListCreateView(ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsOwner()]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class ReviewDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAnonymous()]
+        return [IsOwner(), CanEditWithIn15Minutes()]
 
 class RegisterView(APIView):
     def post(self, request):
@@ -73,7 +113,6 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data)
-
 
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -113,5 +152,3 @@ class ConfirmView(APIView):
 class LoginView(APIView):
     def post(self, request):
         ...
-
-

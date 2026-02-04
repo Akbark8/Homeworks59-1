@@ -17,6 +17,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+        read_only_fields = ['owner', 'created_at']
 
 
 class ProductSerializer(serializers.ModelSerializer):

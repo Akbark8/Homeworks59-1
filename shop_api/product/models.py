@@ -32,6 +32,13 @@ class Review(models.Model):
             MaxValueValidator(5)
         ], default=0
     )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
