@@ -22,8 +22,8 @@ class GoogleLoginAPIView(CreateAPIView):
             url="https://oauth2.googleapis.com/token",
             data={
                 "code": code,
-                "client_id": os.environ.get("783364447988-1kthrdbjig6in8mlvrqptkm94loo75c1.apps.googleusercontent.com"),
-                "client_secret": os.environ.get("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"),
+                "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
+                "client_secret": os.environ.get("GOOGLE_CLIENT_SECRET"),
                 "redirect_uri": os.environ.get("http://127.0.0.1:8000/api/v1/accounts/google-login/"),
                 "grant_type": "authorization_code",
             }
