@@ -2,7 +2,7 @@ import random
 import string
 
 from django.db import transaction
-from django.contrib.auth import authenticate
+
 
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
@@ -13,7 +13,8 @@ from .models import CustomUser, ConfirmationCode
 from .serializers import (
     RegisterValidateSerializer,
     AuthValidateSerializer,
-    ConfirmationSerializer
+    ConfirmationSerializer,
+    GoogleAuthSerializer,
 )
 from .tokens import CustomRefreshToken
 
@@ -94,6 +95,21 @@ class AuthorizationAPIView(APIView):
                 {'error': 'Аккаунт не активирован'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
+
+        refresh = CustomRefreshToken.for_user(user)
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
+
+class GoogleAuthorizationAPIView(APIView):
+
+    def post(self, request):
+        serializer = GoogleAuthSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data['user']
 
         refresh = CustomRefreshToken.for_user(user)
 
