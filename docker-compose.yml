@@ -8,6 +8,7 @@ services:
       - "7001:8000"
     depends_on:
       - shop_api_db
+      - shop_api_redis
   shop_api_db:
     image: "postgres:18"
     environment:
@@ -16,5 +17,9 @@ services:
       - POSTGRES_PASSWORD=Asanbekov0901
     volumes:
       - 'shop_api-data:/var/lib/postgresql/data'
+  shop_api_redis:
+    image: "redis:7-alpine"
+    ports:
+      - "6379:6379"
 volumes:
-  shop_api-data:
+  shop_api-data:a:
