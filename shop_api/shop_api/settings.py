@@ -151,3 +151,4 @@ import os
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')

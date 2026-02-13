@@ -17,6 +17,7 @@ from .serializers import (
     GoogleAuthSerializer,
 )
 from .tokens import CustomRefreshToken
+from .confirmation_code_store import save_confirmation_code, consume_confirmation_code
 
 
 class RegistrationAPIView(CreateAPIView):
@@ -35,10 +36,7 @@ class RegistrationAPIView(CreateAPIView):
 
             code = ''.join(random.choices(string.digits, k=6))
 
-            ConfirmationCode.objects.create(
-                user=user,
-                code=code
-            )
+        save_confirmation_code(user.id, code)
 
         return Response(
             {
@@ -60,15 +58,15 @@ class ConfirmUserAPIView(CreateAPIView):
         code = serializer.validated_data['code']
 
         with transaction.atomic():
-            confirmation = ConfirmationCode.objects.get(
-                user_id=user_id,
-                code=code
-            )
-            user = confirmation.user
+            user = CustomUser.objects.get(id=user_id)
+
+            if not consume_confirmation_code(user_id=user_id, code=code):
+                return Response(
+                    {'error': 'Неверный или просроченный код подтверждения'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             user.is_active = True
             user.save()
-
-            confirmation.delete()
 
         refresh = CustomRefreshToken.for_user(user)
 
